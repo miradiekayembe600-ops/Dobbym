@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dobbym Premium</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #fcfcfd; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body>
+    <header class="sticky top-0 z-40 bg-white/80 backdrop-blur-md px-4 py-4 flex items-center justify-between border-b border-gray-100">
+        <div class="flex items-center gap-2" onclick="location.reload()">
+            <div class="w-9 h-9 bg-black text-white rounded-xl flex items-center justify-center font-black italic shadow-lg">D</div>
+            <span class="font-black text-lg tracking-tighter uppercase">Dobbym</span>
+        </div>
+        <div class="flex-1 mx-4 bg-gray-100 rounded-2xl px-3 py-2 flex items-center gap-2 text-gray-400 text-sm italic">Mode Luxe Activé</div>
+    </header>
+
+    <main class="pb-32 p-4 max-w-lg mx-auto">
+        <div id="productGrid" class="grid grid-cols-1 gap-6"></div>
+    </main>
+
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t p-5 flex justify-around shadow-lg">
+        <i data-lucide="layout-grid" class="text-black"></i>
+        <i data-lucide="user" class="text-gray-300"></i>
+    </nav>
+
+    <script>
+        const products = [
+            { id: 1, name: 'Jordan 4 Pine Green', cat: 'Sneakers', price: 450, img: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=400' },
+            { id: 2, name: 'iPhone 15 Pro Max', cat: 'Tech', price: 1299, img: 'https://images.unsplash.com/photo-1696446701796-da61225697cc?w=400' },
+            { id: 3, name: 'MacBook Pro M3', cat: 'Tech', price: 1999, img: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400' },
+            { id: 4, name: 'Collier Cuban 18k', cat: 'Bijoux', price: 850, img: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=400' }
+        ];
+
+        function render() {
+            document.getElementById('productGrid').innerHTML = products.map(p => `
+                <div class="bg-white rounded-[2rem] overflow-hidden border border-gray-50 shadow-sm" onclick="askAI('${p.name}')">
+                    <img src="${p.img}" class="w-full h-64 object-cover">
+                    <div class="p-5 flex justify-between items-center">
+                        <div><p class="text-[10px] font-bold text-purple-600 uppercase italic">${p.cat}</p><h3 class="font-black text-lg italic uppercase">${p.name}</h3></div>
+                        <p class="text-xl font-black">${p.price}€</p>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        async function askAI(name) {
+            alert("Expert Dobbym analyse " + name + "...");
+            const res = await fetch('/api/chat', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ prompt: "Donne-moi un argument de vente court pour : " + name })
+            });
+            const data = await res.json();
+            alert("Expert Dobbym : " + data.candidates[0].content.parts[0].text);
+        }
+        render();
+    </script>
+</body>
+</html>
